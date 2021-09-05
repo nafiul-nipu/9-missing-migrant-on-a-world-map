@@ -1,25 +1,41 @@
-import logo from './logo.svg';
 import './App.css';
 
+import { useWorldAtlas } from './components/useWorldAtlas';
+import {useData} from './components/useData'
+import { WorldMap } from './components/WorldMap';
+import { scaleSqrt, max } from 'd3';
+
+const width = 960;
+const height = 500;
+
 function App() {
+  const worldAtlas = useWorldAtlas()
+  const data = useData()
+
+  if(!worldAtlas || !data){
+    return <pre>Loading ...</pre>
+  }
+
+  const sizeValue = d => d['Total Dead and Missing'];
+  const maxRadius = 15;
+
+  const sizeScale = scaleSqrt()
+                    .domain([0, max(data, sizeValue)])
+                    .range([0, maxRadius])
+ 
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <svg width={width} height={height}>      
+      <WorldMap 
+        worldAtlas={worldAtlas}
+        data={data}
+        sizeScale={sizeScale}
+        sizeValue = {sizeValue}
+      />
+    </svg>
   );
+
 }
 
 export default App;
+ 
